@@ -54,11 +54,49 @@
       max-height: 50px;
       border-radius: 5px;
       filter: drop-shadow(0 0 4px #fff);
+
+      #loadingScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #000000; /* Màu nền đen */
+      z-index: 9999; /* Đảm bảo nó nằm trên cùng */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 1s ease-out; /* Hiệu ứng mờ dần khi hoàn tất */
+      color: #ffffff; /* Màu chữ trắng */
+      font-size: 1.2em;
+    }
+
+    .loader {
+      border: 6px solid #f3f3f3; /* Màu xám nhạt */
+      border-top: 6px solid #ff7487; /* Màu hồng nổi bật */
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 2s linear infinite;
+      margin-bottom: 15px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
     }
   </style>
 </head>
 <body>
 
+  <div id="galaxy"></div>
+  <div id="rotatingContainer"></div>
+  <div id="loadingScreen">
+    <div class="loader"></div>
+    <p>Đang tải...</p>
+  </div>
   <div id="galaxy"></div>
   <div id="rotatingContainer"></div>
 
@@ -67,8 +105,8 @@
     const rotatingContainer = document.getElementById('rotatingContainer');
     const galaxy = document.getElementById('galaxy');
 
-    const messages = ["Em à", "Trung thu vui vẻ nha em yêu 💖", "Anh yêu em", "Mãi yêu", "Mỗi ngày có em đều là những ngày tuyệt vời", "Khoảnh khắc đẹp nhất là khoảnh khắc có e bên cạnh", "Tình yêu của chúng ta sẽ luôn là tình yêu tuyệt vời nhất, duy nhất và mãi mãi", "Wishing us a long life to share the graceful moonlight", "Năm trung thu nay lại buồn nữa rồi", "ước rằng năm sau sẽ được đón trung thu cùng em, cung như mọi ngày lễ khác", "Mong rằng em sẽ chờ anh", "Anh muốn thương em thật nhiều", "Xin lỗi em:("];
-    const imageURLs = ["1.jpg"];
+    const messages = ["Em à", "Trung thu vui vẻ nha em yêu 💖", "Anh yêu em", "Mãi yêu", "Mỗi ngày có em đều là những ngày tuyệt vời", "Khoảnh khắc đẹp nhất là khoảnh khắc có e bên cạnh", "Tình yêu của chúng ta sẽ luôn là tình yêu tuyệt vời nhất, duy nhất và mãi mãi", "Wishing us a long life to share the graceful moonlight", "Năm trung thu nay lại buồn nữa rồi", "ước rằng năm sau sẽ được đón trung thu cùng em, cung như mọi ngày lễ khác", "Mong rằng em sẽ chờ anh", "Anh muốn thương em thật nhiều", "Xin lỗi em:(","Lại làm em buồn nữa rồi",];
+    const imageURLs = ["1.jpg", "2.jpg", "3.jpg", "4.jpg"];
     const icons = ["❤️", "❤", "💗"];
     const maxParticles = 120;
     const activeParticles = new Set();
@@ -204,6 +242,30 @@
         started = true;
       });
     }
+
+    function hideLoadingScreen() {
+      const loadingScreen = document.getElementById('loadingScreen');
+      if (loadingScreen) {
+        // Đặt độ mờ (opacity) về 0 để kích hoạt hiệu ứng mờ dần
+        loadingScreen.style.opacity = '0';
+        
+        // Loại bỏ phần tử khỏi DOM sau khi hiệu ứng transition kết thúc (1000ms = 1s)
+        setTimeout(() => {
+          loadingScreen.remove();
+        }, 1000); 
+      }
+    }
+
+    window.addEventListener('load', () => {
+      // 'load' event đảm bảo mọi tài nguyên (images, scripts, three.js) đã tải xong
+      startStars();
+      loopParticles();
+      initRotation();
+      setupMusic();
+      
+      // Ẩn màn hình loading cuối cùng
+      hideLoadingScreen();
+    });
 
     window.addEventListener('DOMContentLoaded', () => {
       startStars();
